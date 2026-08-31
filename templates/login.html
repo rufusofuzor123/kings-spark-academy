@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 400px; margin: 80px auto;">
+  <div class="card">
+    <h2 style="text-align: center; color: var(--accent-gold);">Portal Login</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+      <label>Username / Admission No</label>
+      <input type="text" name="username" required>
+      
+      <label>Password</label>
+      <input type="password" name="password" required>
+      
+      <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

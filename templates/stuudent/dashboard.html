@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Student Portal Dashboard</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Student Profile</h3>
+    <img src="{{ url_for('static', filename='uploads/passports/' + profile.passport_image) }}" alt="Passport" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+    <p><strong>Name:</strong> {{ current_user.full_name }}</p>
+    <p><strong>Admission No:</strong> {{ profile.admission_number }}</p>
+    <p><strong>Class:</strong> {{ profile.class_name }}</p>
+    <a href="{{ url_for('result_sheet') }}" class="btn-primary" style="display: block; text-align: center; text-decoration: none; margin-top: 10px;">Check Result Sheet</a>
+  </div>
+  
+  <div class="card">
+    <h3>Current Fee Structure & Payment</h3>
+    {% if fee %}
+    <p><strong>Term Fee:</strong> ₦{{ "%.2f"|format(fee.amount) }}</p>
+    <form action="{{ url_for('initialize_payment') }}" method="POST">
+      <input type="hidden" name="amount" value="{{ fee.amount }}">
+      <button type="submit" class="btn-primary">Pay via Paystack (Card / Transfer / USSD)</button>
+    </form>
+    {% else %}
+    <p>No fee structure published for this term.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

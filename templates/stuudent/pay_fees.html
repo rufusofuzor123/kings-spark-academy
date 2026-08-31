@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 600px; margin: 30px auto;">
+  <a href="{{ url_for('student_dashboard') }}" style="color: var(--accent-gold); text-decoration: none;">&larr; Back to Dashboard</a>
+  
+  <div class="card" style="margin-top: 15px;">
+    <h2 style="color: var(--accent-gold); margin-top: 0;">Online Fee Payment Gateway</h2>
+    <p style="color: var(--text-muted); font-size: 14px;">Complete your school fee payment online via Paystack. You can pay using Card, Direct Bank Transfer, or USSD.</p>
+    
+    <div style="background-color: var(--secondary-blue); padding: 15px; border-radius: 6px; margin: 20px 0;">
+      <p style="margin: 5px 0;"><strong>Student Name:</strong> {{ current_user.full_name }}</p>
+      <p style="margin: 5px 0;"><strong>Admission Number:</strong> {{ profile.admission_number }}</p>
+      <p style="margin: 5px 0;"><strong>Class:</strong> {{ profile.class_name }}</p>
+      <p style="margin: 5px 0;"><strong>Academic Term:</strong> {{ session.term_name if session else 'N/A' }} ({{ session.session_name if session else 'N/A' }})</p>
+    </div>
+    
+    {% if fee %}
+    <div style="text-align: center; margin-bottom: 25px;">
+      <span style="font-size: 14px; color: var(--text-muted);">TOTAL FEE PAYABLE</span>
+      <h1 style="color: var(--accent-gold); margin: 5px 0; font-size: 36px;">₦{{ "%.2f"|format(fee.amount) }}</h1>
+    </div>
+    
+    <form action="{{ url_for('initialize_payment') }}" method="POST">
+      <input type="hidden" name="amount" value="{{ fee.amount }}">
+      <button type="submit" class="btn-primary" style="padding: 12px; font-size: 16px;">Proceed to Paystack Checkout</button>
+    </form>
+    {% else %}
+    <div class="alert alert-warning">
+      No active fee structure has been published for your class in the current academic term. Please contact the administrator.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

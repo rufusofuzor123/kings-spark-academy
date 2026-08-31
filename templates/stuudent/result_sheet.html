@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kings Spark Academy - Official Result Sheet</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="background-color: #fff; color: #000;">
+    <div class="no-print" style="padding: 20px; text-align: right;">
+        <button onclick="window.print()" class="btn-primary" style="width: auto; padding: 10px 30px;">Print / Download PDF</button>
+    </div>
+
+    <div class="printable-sheet" style="max-width: 850px; margin: 0 auto; padding: 20px; border: 2px solid #000;">
+        <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            <h1 style="margin: 0; color: #0a192f; font-size: 28px;">KINGS SPARK ACADEMY</h1>
+            <p style="margin: 4px 0; font-weight: bold; text-transform: uppercase;">Knowledge, Character, and Excellence</p>
+            <p style="margin: 0; font-size: 13px;">12 Spark Avenue, Asaba, Delta State | Phone: +234 800 000 0000</p>
+        </div>
+
+        <table width="100%" style="margin: 20px 0; font-size: 14px;">
+            <tr>
+                <td><strong>STUDENT NAME:</strong> {{ current_user.full_name|upper }}</td>
+                <td><strong>ADMISSION NO:</strong> {{ profile.admission_number }}</td>
+            </tr>
+            <tr>
+                <td><strong>CLASS:</strong> {{ profile.class_name }}</td>
+                <td><strong>ACADEMIC TERM:</strong> {{ session.term_name }} ({{ session.session_name }})</td>
+            </tr>
+        </table>
+
+        <table width="100%" border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; text-align: center;">
+            <thead>
+                <tr style="background-color: #0a192f; color: #fff;">
+                    <th style="text-align: left;">SUBJECT</th>
+                    <th>CA 1 (15)</th>
+                    <th>CA 2 (15)</th>
+                    <th>EXAM (70)</th>
+                    <th>TOTAL (100)</th>
+                    <th>GRADE</th>
+                    <th>REMARK</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in scores %}
+                <tr>
+                    <td style="text-align: left;">{{ item.subject.name }}</td>
+                    <td>{{ item.ca1 }}</td>
+                    <td>{{ item.ca2 }}</td>
+                    <td>{{ item.exam }}</td>
+                    <td><strong>{{ item.total_score }}</strong></td>
+                    <td>{{ item.grade_and_remark[0] }}</td>
+                    <td>{{ item.grade_and_remark[1] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+            <div>
+                <p>__________________________</p>
+                <p>Class Teacher's Signature</p>
+            </div>
+            <div>
+                <p>__________________________</p>
+                <p>Principal's Stamp & Date</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

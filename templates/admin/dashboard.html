@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Admin Command Dashboard</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Create Session & Term</h3>
+    <form action="{{ url_for('create_term') }}" method="POST">
+      <input type="text" name="session_name" placeholder="Session (e.g. 2025/2026)" required>
+      <select name="term_name" required>
+        <option value="First Term">First Term</option>
+        <option value="Second Term">Second Term</option>
+        <option value="Third Term">Third Term</option>
+      </select>
+      <button type="submit" class="btn-primary">Activate Session</button>
+    </form>
+  </div>
+  
+  <div class="card">
+    <h3>Register Student Account</h3>
+    <form action="{{ url_for('register_student') }}" method="POST" enctype="multipart/form-data">
+      <input type="text" name="full_name" placeholder="Full Name" required>
+      <input type="text" name="username" placeholder="Username / ID" required>
+      <input type="text" name="admission_number" placeholder="Admission Number" required>
+      <input type="text" name="class_name" placeholder="Class (e.g. SS 1)" required>
+      <input type="text" name="parent_phone" placeholder="Parent Phone Number" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <label>Passport Photo:</label>
+      <input type="file" name="passport">
+      <button type="submit" class="btn-primary">Register Student</button>
+    </form>
+  </div>
+  
+  <div class="card">
+    <h3>Register Teacher Account</h3>
+    <form action="{{ url_for('register_teacher') }}" method="POST">
+      <input type="text" name="full_name" placeholder="Full Name" required>
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="text" name="assigned_class" placeholder="Assigned Class" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit" class="btn-primary">Register Teacher</button>
+    </form>
+  </div>
+  
+  <div class="card">
+    <h3>Curriculum & Fees Control</h3>
+    <form action="{{ url_for('create_subject') }}" method="POST">
+      <input type="text" name="name" placeholder="Subject Name (e.g. Physics)" required>
+      <input type="text" name="code" placeholder="Subject Code (e.g. PHY101)" required>
+      <button type="submit" class="btn-primary">Add Subject</button>
+    </form>
+    <hr style="border-color: var(--secondary-blue); margin: 20px 0;">
+    <form action="{{ url_for('set_fee') }}" method="POST">
+      <input type="text" name="class_name" placeholder="Class Name" required>
+      <input type="number" step="0.01" name="amount" placeholder="Fee Amount (NGN)" required>
+      <button type="submit" class="btn-primary">Set Fee</button>
+    </form>
+  </div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+  <h3>Publishing & Alerts</h3>
+  <p>Publishing term results unlocks result checking on student dashboards and dispatches automated SMS notifications to parents.</p>
+  <form action="{{ url_for('publish_results') }}" method="POST">
+    <button type="submit" class="btn-primary" style="background-color: var(--danger); color: #fff;">Publish Results & Send SMS</button>
+  </form>
+</div>
+{% endblock %}

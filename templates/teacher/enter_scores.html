@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 650px; margin: 30px auto;">
+  <a href="{{ url_for('teacher_dashboard') }}" style="color: var(--accent-gold); text-decoration: none;">&larr; Back to Dashboard</a>
+  
+  <div class="card" style="margin-top: 15px;">
+    <h2 style="color: var(--accent-gold); margin-top: 0;">Compile Assessment & Score Record</h2>
+    <p style="color: var(--text-muted); font-size: 14px;">Select student, target subject, and enter the assessment scores. Total score and final grades will be computed automatically by the portal engine.</p>
+    
+    <form action="{{ url_for('enter_scores') }}" method="POST">
+      <label>Select Student:</label>
+      <select name="student_id" required>
+        <option value="" disabled selected>-- Choose Student --</option>
+        {% for std in students %}
+        <option value="{{ std.user.id }}">{{ std.user.full_name }} ({{ std.admission_number }})</option>
+        {% endfor %}
+      </select>
+      
+      <label>Select Subject:</label>
+      <select name="subject_id" required>
+        <option value="" disabled selected>-- Choose Subject --</option>
+        {% for sub in subjects %}
+        <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.code }})</option>
+        {% endfor %}
+      </select>
+      
+      <div style="margin-top: 15px;">
+        <label>Continuous Assessment 1 (Max 15):</label>
+        <input type="number" step="0.1" min="0" max="15" name="ca1" placeholder="Enter CA 1 Score" required>
+      </div>
+      
+      <div>
+        <label>Continuous Assessment 2 (Max 15):</label>
+        <input type="number" step="0.1" min="0" max="15" name="ca2" placeholder="Enter CA 2 Score" required>
+      </div>
+      
+      <div>
+        <label>Terminal Examination (Max 70):</label>
+        <input type="number" step="0.1" min="0" max="70" name="exam" placeholder="Enter Exam Score" required>
+      </div>
+      
+      <button type="submit" class="btn-primary" style="margin-top: 10px;">Save Assessment Record</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

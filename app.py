@@ -71,9 +71,21 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        
         user = User.query.filter_by(username=username).first()
 
-        if user and user.check_password(password):
+        is_valid = False
+        if user:
+            try:
+                if hasattr(user, 'check_password'):
+                    is_valid = user.check_password(password)
+                elif hasattr(user, 'password_hash'):
+                    is_valid = check_password_hash(user.password_hash, password)
+            except Exception as e:
+                print(f"Password check error: {e}")
+                is_valid = False
+
+        if is_valid:
             login_user(user)
             flash('Logged in successfully!', 'success')
             return redirect(url_for('dashboard'))

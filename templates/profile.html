@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 600px;">
+    <h2 class="mb-3">Account Settings & Profile</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Passport Upload Card -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5>Passport Photo / Document</h5>
+        <div class="text-center my-3">
+            {% if current_user.passport_photo %}
+                {% if current_user.passport_photo.endswith('.pdf') %}
+                    <div class="alert alert-info py-2">Uploaded Document: PDF File</div>
+                {% else %}
+                    <img src="{{ url_for('static', filename=current_user.passport_photo) }}" class="rounded-circle img-thumbnail" style="width: 120px; height: 120px; object-fit: cover;" alt="Passport">
+                {% endif %}
+            {% else %}
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center border" style="width: 120px; height: 120px; font-size: 2.5rem; color: #6c757d;">
+                    👤
+                </div>
+            {% endif %}
+        </div>
+
+        <form action="{{ url_for('upload_passport') }}" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="passport" class="form-label">Upload Passport (PNG, JPG, JPEG, PDF)</label>
+                <input type="file" class="form-control" id="passport" name="passport" accept="image/png, image/jpeg, image/jpg, application/pdf" required>
+            </div>
+            <button type="submit" class="btn btn-outline-primary w-100">Upload File</button>
+        </form>
+    </div>
+
+    <!-- Account Details Form -->
+    <div class="card shadow-sm p-4">
+        <form action="{{ url_for('profile') }}" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                <input type="text" class="form-control text-capitalize" value="{{ user.role }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email or '' }}" required>
+            </div>
+
+            <hr class="my-4">
+            <h5>Change Password</h5>
+
+            <div class="mb-3">
+                <label for="current_password" class="form-label">Current Password</label>
+                <input type="password" class="form-control" id="current_password" name="current_password">
+            </div>
+
+            <div class="mb-3">
+                <label for="new_password" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="new_password" name="new_password">
+            </div>
+
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-2">Save Profile Updates</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

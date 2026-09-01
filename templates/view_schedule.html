@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">Class Schedule & Attendance Dashboard</h2>
+
+    <!-- Timetable Section -->
+    <div class="card p-4 shadow-sm mb-4">
+        <h4 class="text-primary">Weekly Class Timetable</h4>
+        <table class="table table-striped mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Class</th>
+                    <th>Day</th>
+                    <th>Time Slot</th>
+                    <th>Subject</th>
+                    <th>Teacher</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in timetables %}
+                <tr>
+                    <td>{{ t.class_name }}</td>
+                    <td>{{ t.day }}</td>
+                    <td>{{ t.time_slot }}</td>
+                    <td><strong>{{ t.subject }}</strong></td>
+                    <td>{{ t.teacher_name }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center">No timetable uploaded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Student Attendance Records Section -->
+    {% if current_user.role == 'student' %}
+    <div class="card p-4 shadow-sm">
+        <h4 class="text-primary">Your Attendance Record</h4>
+        <table class="table table-bordered mt-3">
+            <thead class="table-secondary">
+                <tr>
+                    <th>Date</th>
+                    <th>Class</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in attendance %}
+                <tr>
+                    <td>{{ a.date }}</td>
+                    <td>{{ a.class_name }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if a.status == 'Present' else ('danger' if a.status == 'Absent' else 'warning') }}">
+                            {{ a.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="text-center">No attendance records found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+    <h2>Manage School Timetable</h2>
+
+    <div class="card p-4 shadow-sm mb-4">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Class</label>
+                    <input type="text" name="class_name" class="form-control" placeholder="SS 1" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Day</label>
+                    <select name="day" class="form-select" required>
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Time Slot</label>
+                    <input type="text" name="time_slot" class="form-control" placeholder="08:00 AM - 09:00 AM" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Subject</label>
+                    <input type="text" name="subject" class="form-control" placeholder="Mathematics" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Teacher</label>
+                    <input type="text" name="teacher_name" class="form-control" placeholder="Mr. Okafor" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Timetable Slot</button>
+        </form>
+    </div>
+
+    <h4>Master Timetable Schedule</h4>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Class</th>
+                <th>Day</th>
+                <th>Time Slot</th>
+                <th>Subject</th>
+                <th>Teacher</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in entries %}
+            <tr>
+                <td>{{ e.class_name }}</td>
+                <td>{{ e.day }}</td>
+                <td>{{ e.time_slot }}</td>
+                <td>{{ e.subject }}</td>
+                <td>{{ e.teacher_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

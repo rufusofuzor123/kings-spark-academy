@@ -328,3 +328,62 @@ def paystack_callback():
 
 if __name__ == '__main__':
     app.run(debug=True)
+from models import Attendance, Timetable
+
+# --- Attendance Management Routes ---
+@app.route('/admin/attendance', methods=['GET', 'POST'])
+@login_required
+def manage_attendance():
+    if current_user.role != 'admin':
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('dashboard'))
+        
+    if request.method == 'POST':
+        student_id = request.form.get('student_id')
+        date = request.form.get('date')
+        status = request.form.get('status')
+        class_name = request.form.get('class_name')
+
+        record = Attendance(student_id=student_id, date=date, status=status, class_name=class_name)
+        db.session.add(record)
+        db.session.commit()
+        flash('Attendance record saved successfully!', 'success')
+        return redirect(url_for('manage_attendance'))
+
+    students = User.query.filter_by(role='student').all()
+    records = Attendance.query.order_by(Attendance.date.desc()).all()
+    return render_template('manage_attendance.html', students=students, records=records)
+
+# --- Timetable Management Routes ---
+@app.route('/admin/timetable', methods=['GET', 'POST'])
+@login_required
+def manage_timetable():
+    if current_user.role != 'admin':
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    if request.method == 'POST':
+        class_name = request.form.get('class_name')
+        day = request.form.get('day')
+        time_slot = request.form.get('time_slot')
+        subject = request.form.get('subject')
+        teacher_name = request.form.get('teacher_name')
+
+        entry = Timetable(class_name=class_name, day=day, time_slot=time_slot, subject=subject, teacher_name=teacher_name)
+        db.session.add(entry)
+        db.session.commit()
+        flash('Timetable slot created successfully!', 'success')
+        return redirect(url_for('manage_timetable'))
+
+    entries = Timetable.query.order_by(Timetable.class_name, Timetable.day).all()
+    return render_template('manage_timetable.html', entries=entries)
+
+# --- View Schedule & Attendance for Students/Teachers ---
+@app.route('/view_schedule')
+@login_required
+def view_schedule():
+    timetables = Timetable.query.order_by(Timetable.day, Timetable.time_slot).all()
+    attendance = []
+    if current_user.role == 'student':
+        attendance = Attendance.query.filter_by(student_id=current_user.id).order_by(Attendance.date.desc()).all()
+    return render_template('view_schedule.html', timetables=timetables, attendance=attendance)

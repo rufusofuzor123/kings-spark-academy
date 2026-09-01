@@ -37,33 +37,35 @@ def load_user(user_id):
         db.session.rollback()
         return None
 
-# Auto-Initialize Database & Admin User on Server Startup
-with app.app_context():
-    try:
-        db.create_all()
-        admin = User.query.filter_by(username='admin').first()
-        if not admin:
-            admin = User(username='admin', role='admin')
-            if hasattr(admin, 'full_name'):
-                admin.full_name = 'System Administrator'
-            if hasattr(admin, 'set_password'):
-                admin.set_password('admin123')
-            else:
-                admin.password_hash = generate_password_hash('admin123')
-            db.session.add(admin)
-            db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        app.logger.error(f"Startup DB Error: {e}")
+# Safe First-Request Initialization (Prevents Gunicorn Startup Timeouts)
+@app.before_request
+def initialize_db_once():
+    if not getattr(app, '_db_initialized', False):
+        try:
+            db.create_all()
+            admin = User.query.filter_by(username='admin').first()
+            if not admin:
+                admin = User(username='admin', role='admin')
+                if hasattr(admin, 'full_name'):
+                    admin.full_name = 'System Administrator'
+                if hasattr(admin, 'set_password'):
+                    admin.set_password('admin123')
+                else:
+                    admin.password_hash = generate_password_hash('admin123')
+                db.session.add(admin)
+                db.session.commit()
+            app._db_initialized = True
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"First request DB setup warning: {e}")
 
 @app.route('/')
 def home():
     try:
         return render_template('index.html')
     except Exception as e:
-        db.session.rollback()
-        app.logger.error(f"Home route error: {e}")
-        return render_template('index.html')
+        app.logger.error(f"Index template render error: {e}")
+        return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -90,8 +92,8 @@ def login():
             flash('Invalid username or password.', 'danger')
         except Exception as e:
             db.session.rollback()
-            app.logger.error(f"Login processing error: {e}")
-            flash('Error logging in.', 'danger')
+            app.logger.error(f"Login error: {e}")
+            flash('Database processing error.', 'danger')
 
     return render_template('login.html')
 
@@ -122,7 +124,7 @@ def force_reset_db():
 
         db.session.add(admin)
         db.session.commit()
-        return "<h3>Database reset successfully! <a href='/login'>Login Here</a>.</h3>"
+        return "<h3>Database reset and Admin initialized cleanly! <a href='/login'>Login Here</a>.</h3>"
     except Exception as e:
         db.session.rollback()
         return f"Error resetting database: {str(e)}"
